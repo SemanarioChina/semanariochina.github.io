@@ -1,398 +1,56 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Semanario China</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
-      background: #f5f5f5;
-      color: #111;
-      line-height: 1.7;
-    }
-
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    .container {
-      width: 92%;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    header {
-      background: #ffffff;
-      border-bottom: 3px solid #b30000;
-    }
-
-    .topbar {
-      padding: 12px 0;
-      font-size: 14px;
-      color: #666;
-      border-bottom: 1px solid #e5e5e5;
-    }
-
-    .site-header {
-      padding: 24px 0 18px;
-    }
-
-    .site-title {
-      font-size: 40px;
-      font-weight: 700;
-      color: #b30000;
-      letter-spacing: 0.5px;
-    }
-
-    .site-subtitle {
-      margin-top: 8px;
-      color: #666;
-      font-size: 16px;
-    }
-
-    nav {
-      background: #b30000;
-    }
-
-    .nav-inner {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 24px;
-      padding: 14px 0;
-    }
-
-    .nav-inner a {
-      color: #fff;
-      font-size: 15px;
-      font-weight: 600;
-    }
-
-    .nav-inner a:hover {
-      text-decoration: underline;
-    }
-
-    main {
-      padding: 28px 0 50px;
-    }
-
-    .main-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 28px;
-      align-items: start;
-    }
-
-    .headline {
-      background: #fff;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-    }
-
-    .headline img {
-      width: 100%;
-      height: 380px;
-      object-fit: cover;
-      display: block;
-    }
-
-    .headline-content {
-      padding: 24px;
-    }
-
-    .headline-tag {
-      display: inline-block;
-      font-size: 13px;
-      color: #b30000;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    .headline h1 {
-      font-size: 34px;
-      line-height: 1.3;
-      margin-bottom: 14px;
-    }
-
-    .headline p {
-      color: #555;
-      font-size: 17px;
-      margin-bottom: 16px;
-    }
-
-    .meta {
-      font-size: 14px;
-      color: #888;
-    }
-
-    .sidebar-section {
-      background: #fff;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-      margin-bottom: 20px;
-    }
-
-    .section-title {
-      font-size: 20px;
-      margin-bottom: 18px;
-      padding-left: 10px;
-      border-left: 4px solid #b30000;
-    }
-
-    .side-list {
-      display: grid;
-      gap: 16px;
-    }
-
-    .side-item {
-      padding-bottom: 14px;
-      border-bottom: 1px solid #eee;
-    }
-
-    .side-item:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-    }
-
-    .side-item a {
-      font-size: 16px;
-      font-weight: 600;
-      color: #222;
-    }
-
-    .side-item a:hover {
-      color: #b30000;
-    }
-
-    .side-item .meta {
-      margin-top: 6px;
-    }
-
-    .news-section {
-      margin-top: 32px;
-    }
-
-    .news-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 22px;
-    }
-
-    .news-card {
-      background: #fff;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-      transition: transform 0.15s ease;
-    }
-
-    .news-card:hover {
-      transform: translateY(-3px);
-    }
-
-    .news-card img {
-      width: 100%;
-      height: 190px;
-      object-fit: cover;
-      display: block;
-    }
-
-    .news-card-content {
-      padding: 18px;
-    }
-
-    .news-card h3 {
-      font-size: 20px;
-      line-height: 1.4;
-      margin-bottom: 10px;
-    }
-
-    .news-card p {
-      color: #555;
-      font-size: 15px;
-      margin-bottom: 12px;
-    }
-
-    footer {
-      background: #1d1d1d;
-      color: #bbb;
-      padding: 28px 0;
-      margin-top: 40px;
-    }
-
-    .footer-inner {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      flex-wrap: wrap;
-      font-size: 14px;
-    }
-
-    @media (max-width: 900px) {
-      .main-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .news-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .headline img {
-        height: 260px;
-      }
-
-      .headline h1 {
-        font-size: 28px;
-      }
-
-      .site-title {
-        font-size: 32px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body data-page="home">
+  <header class="site-header">
+    <div class="top-strip"></div>
 
-  <header>
-    <div class="topbar">
-      <div class="container">
-        Semanario China ｜ 拉丁美洲中国新闻周刊
+    <div class="container">
+      <div class="header-row">
+        <div>
+          <div class="site-kicker" id="site-kicker">Noticias sobre China para América Latina</div>
+          <h1 class="site-title">Semanario China</h1>
+          <p class="site-subtitle" id="site-subtitle">Ventana bilingüe y trilingüe sobre China, América Latina y el mundo.</p>
+        </div>
+
+        <div class="lang-switcher">
+          <button class="lang-btn" data-lang="es">ES</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="zh">中文</button>
+        </div>
       </div>
-    </div>
 
-    <div class="container site-header">
-      <div class="site-title">Semanario China</div>
-      <div class="site-subtitle">Noticias sobre China para América Latina</div>
+      <nav class="main-nav" id="main-nav"></nav>
     </div>
-
-    <nav>
-      <div class="container nav-inner">
-        <a href="#">首页</a>
-        <a href="#">中国</a>
-        <a href="#">拉美</a>
-        <a href="#">经贸</a>
-        <a href="#">文化</a>
-        <a href="#">专题</a>
-      </div>
-    </nav>
   </header>
 
-  <main class="container">
-    <section class="main-grid">
-      <article class="headline">
-        <a href="news/top-story.html">
-          <img src="images/top-story.jpg" alt="头条新闻配图">
-        </a>
-        <div class="headline-content">
-          <div class="headline-tag">头条</div>
-          <h1><a href="news/top-story.html">这里放你的头条标题，建议稍微长一点，看起来更像新闻网站</a></h1>
-          <p>
-            这里是头条新闻摘要。可以写两三句话，简要交代事件背景、主要内容和意义。
-            这一区域就是你网站最显眼的位置，适合放最重要的一条稿件。
-          </p>
-          <div class="meta">2026-04-03 ｜ Semanario China</div>
-        </div>
-      </article>
-
-      <aside>
-        <div class="sidebar-section">
-          <h2 class="section-title">最新消息</h2>
-          <div class="side-list">
-            <div class="side-item">
-              <a href="news/news-1.html">这里放最新消息标题一</a>
-              <div class="meta">2026-04-03</div>
-            </div>
-            <div class="side-item">
-              <a href="news/news-2.html">这里放最新消息标题二</a>
-              <div class="meta">2026-04-02</div>
-            </div>
-            <div class="side-item">
-              <a href="news/news-3.html">这里放最新消息标题三</a>
-              <div class="meta">2026-04-02</div>
-            </div>
-            <div class="side-item">
-              <a href="news/news-4.html">这里放最新消息标题四</a>
-              <div class="meta">2026-04-01</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="sidebar-section">
-          <h2 class="section-title">专题推荐</h2>
-          <div class="side-list">
-            <div class="side-item">
-              <a href="news/special-1.html">中拉经贸合作观察</a>
-              <div class="meta">专题</div>
-            </div>
-            <div class="side-item">
-              <a href="news/special-2.html">中国制造在拉美</a>
-              <div class="meta">专题</div>
-            </div>
-            <div class="side-item">
-              <a href="news/special-3.html">文化交流与民间往来</a>
-              <div class="meta">专题</div>
-            </div>
-          </div>
-        </div>
-      </aside>
+  <main class="container main-home">
+    <section class="hero-layout">
+      <article class="hero-card" id="hero-card"></article>
+      <aside class="sidebar-panel" id="latest-panel"></aside>
     </section>
 
-    <section class="news-section">
-      <h2 class="section-title">推荐阅读</h2>
-      <div class="news-grid">
-
-        <article class="news-card">
-          <a href="news/story-1.html">
-            <img src="images/story-1.jpg" alt="新闻图片1">
-          </a>
-          <div class="news-card-content">
-            <h3><a href="news/story-1.html">这里放推荐稿件标题一</a></h3>
-            <p>这里放摘要。可以简要写这条新闻的主要信息，控制在两三行以内。</p>
-            <div class="meta">2026-04-03</div>
-          </div>
-        </article>
-
-        <article class="news-card">
-          <a href="news/story-2.html">
-            <img src="images/story-2.jpg" alt="新闻图片2">
-          </a>
-          <div class="news-card-content">
-            <h3><a href="news/story-2.html">这里放推荐稿件标题二</a></h3>
-            <p>这里放摘要。适合放中拉关系、经贸、文化、社会等不同内容。</p>
-            <div class="meta">2026-04-02</div>
-          </div>
-        </article>
-
-        <article class="news-card">
-          <a href="news/story-3.html">
-            <img src="images/story-3.jpg" alt="新闻图片3">
-          </a>
-          <div class="news-card-content">
-            <h3><a href="news/story-3.html">这里放推荐稿件标题三</a></h3>
-            <p>这里放摘要。这样首页会更饱满，看起来更像媒体首页而不是个人博客。</p>
-            <div class="meta">2026-04-01</div>
-          </div>
-        </article>
-
+    <section class="section-block">
+      <div class="section-header">
+        <h2 id="featured-title"></h2>
       </div>
+      <div class="card-grid" id="featured-grid"></div>
     </section>
   </main>
 
-  <footer>
-    <div class="container footer-inner">
+  <footer class="site-footer">
+    <div class="container footer-row">
       <div>© 2026 Semanario China</div>
-      <div>Contacto ｜ Sobre nosotros</div>
+      <div id="footer-text">Cobertura de China y América Latina</div>
     </div>
   </footer>
 
+  <script src="news-data.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
