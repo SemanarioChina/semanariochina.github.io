@@ -2,7 +2,23 @@ const uiText = {
   es: {
     kicker: "Noticias sobre China para América Latina",
     subtitle: "Ventana trilingüe sobre China, América Latina y el mundo.",
-    nav: ["Portada", "China", "América Latina", "Economía", "Cultura", "Especiales"],
+   es: {
+  kicker: "Noticias sobre China para América Latina",
+  subtitle: "Ventana trilingüe sobre China, América Latina y el mundo.",
+  nav: [
+    { label: "Portada", slug: "home" },
+    { label: "China", slug: "china" },
+    { label: "América Latina", slug: "latam" },
+    { label: "Economía", slug: "economy" },
+    { label: "Cultura", slug: "culture" },
+    { label: "Especiales", slug: "special" }
+  ],
+  latest: "Últimas noticias",
+  featured: "Lecturas recomendadas",
+  footer: "Cobertura de China y América Latina",
+  back: "← Volver a la portada",
+  metaSource: "Semanario China"
+},
     latest: "Últimas noticias",
     featured: "Lecturas recomendadas",
     footer: "Cobertura de China y América Latina",
@@ -12,7 +28,23 @@ const uiText = {
   en: {
     kicker: "News on China for Latin America",
     subtitle: "A trilingual window on China, Latin America and the world.",
-    nav: ["Home", "China", "Latin America", "Economy", "Culture", "Special Reports"],
+    en: {
+  kicker: "News on China for Latin America",
+  subtitle: "A trilingual window on China, Latin America and the world.",
+  nav: [
+    { label: "Home", slug: "home" },
+    { label: "China", slug: "china" },
+    { label: "Latin America", slug: "latam" },
+    { label: "Economy", slug: "economy" },
+    { label: "Culture", slug: "culture" },
+    { label: "Special Reports", slug: "special" }
+  ],
+  latest: "Latest News",
+  featured: "Recommended Reading",
+  footer: "Coverage of China and Latin America",
+  back: "← Back to homepage",
+  metaSource: "Semanario China"
+},
     latest: "Latest News",
     featured: "Recommended Reading",
     footer: "Coverage of China and Latin America",
@@ -22,7 +54,23 @@ const uiText = {
   zh: {
     kicker: "面向拉丁美洲的中国新闻",
     subtitle: "以西语、英语和中文呈现中国、拉美与世界的观察。",
-    nav: ["首页", "中国", "拉美", "经贸", "文化", "专题"],
+    zh: {
+  kicker: "面向拉丁美洲的中国新闻",
+  subtitle: "以西语、英语和中文呈现中国、拉美与世界的观察。",
+  nav: [
+    { label: "首页", slug: "home" },
+    { label: "中国", slug: "china" },
+    { label: "拉美", slug: "latam" },
+    { label: "经贸", slug: "economy" },
+    { label: "文化", slug: "culture" },
+    { label: "专题", slug: "special" }
+  ],
+  latest: "最新消息",
+  featured: "推荐阅读",
+  footer: "中国与拉美新闻观察",
+  back: "← 返回首页",
+  metaSource: "Semanario China"
+}
     latest: "最新消息",
     featured: "推荐阅读",
     footer: "中国与拉美新闻观察",
