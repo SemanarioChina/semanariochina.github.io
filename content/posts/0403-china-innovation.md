@@ -1,7 +1,7 @@
 ---
 id: 0403-china-innovation
 date: 2026-04-03
-section: economy [- `home` - `china` - `latam` - `economy` - `culture` - `special`]
+section: economy 
 image: image/posts/0403/2.jpg
 tags:
 category:
