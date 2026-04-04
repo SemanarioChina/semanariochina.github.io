@@ -1,12 +1,13 @@
 ---
 id: 0403-dual-forums
 date: 2026-04-03
+section: economy
 image: image/posts/0403/1.jpg
 tags:
 category:
-  es: Economía
-  en: Economy
-  zh: 经贸
+  es: 
+  en: 
+  zh: 
 title:
   es: China y América Latina amplían nuevos espacios de cooperación
   en: China and Latin America expand new areas of cooperation
