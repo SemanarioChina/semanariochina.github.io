@@ -1,8 +1,7 @@
 ---
 id: 0404-underwater-robot
 date: 2026-04-04
-section: economy 
-<!-- home china latam economy culture special -->
+section: [economy,china]
 image: image/posts/04/1.jpg
 title:
   es: Los robots submarinos impulsan el desarrollo de los recursos marinos en Dalian
@@ -13,7 +12,7 @@ summary:
   en: 
   zh: 
 ---
-
+<!-- home china latam economy culture special -->
 :::es
 Por Liu Hongchao, People’s Daily
 
