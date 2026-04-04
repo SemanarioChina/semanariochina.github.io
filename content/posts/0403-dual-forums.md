@@ -1,7 +1,8 @@
 ---
 id: 0403-dual-forums
 date: 2026-04-03
-image: image/posts/0402/1.jpg
+image: image/posts/0403/1.jpg
+tags:
 category:
   es: Economía
   en: Economy
