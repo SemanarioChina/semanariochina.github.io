@@ -1,3 +1,4 @@
+---
 id: 0404-china-citrus
 date: 2026-04-04
 section: economy
