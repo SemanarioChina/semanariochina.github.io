@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Semanario China</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .archive-page {
+      padding-top: 28px;
+      padding-bottom: 48px;
+    }
+
+    .archive-box {
+      background: #fff;
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+
+    .archive-header {
+      margin-bottom: 22px;
+    }
+
+    .archive-title {
+      margin: 0 0 10px;
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      line-height: 1.2;
+    }
+
+    .archive-intro {
+      margin: 0;
+      color: #666;
+      line-height: 1.7;
+    }
+
+    .archive-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .load-more-wrap {
+      margin-top: 28px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .load-more-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 24px;
+      font-size: 0.98rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: #8b1e2d;
+      color: #fff;
+      transition: 0.2s ease;
+    }
+
+    .load-more-btn:hover {
+      background: #741926;
+    }
+
+    .load-more-btn:disabled {
+      opacity: 0.55;
+      cursor: default;
+    }
+
+    @media (max-width: 900px) {
+      .archive-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .archive-box {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+<body data-page="archive">
+  <header class="site-header article-header">
+    <div class="top-strip"></div>
+
+    <div class="container">
+      <div class="header-row">
+        <div>
+          <div class="site-kicker" id="site-kicker">Noticias sobre China para América Latina</div>
+          <h1 class="site-title small-title">
+            <a href="index.html">Semanario China</a>
+          </h1>
+        </div>
+
+        <div class="lang-switcher">
+          <button class="lang-btn" data-lang="es">ES</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="zh">中文</button>
+        </div>
+      </div>
+
+      <nav class="main-nav" id="main-nav"></nav>
+    </div>
+  </header>
+
+  <main class="container archive-page">
+    <a class="back-link" id="back-link" href="index.html">← Volver a la portada</a>
+
+    <section class="archive-box">
+      <div class="archive-header">
+        <h1 class="archive-title" id="archive-title">Archivo completo</h1>
+        <p class="archive-intro" id="archive-intro">
+          Consulta todas las publicaciones históricas. Se muestran 10 al inicio y puedes cargar 10 más cada vez.
+        </p>
+      </div>
+
+      <div class="archive-grid" id="archive-list"></div>
+
+      <div class="load-more-wrap">
+        <button class="load-more-btn" id="load-more-btn">Cargar más</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <div>© 2026 Semanario China</div>
+      <div id="footer-text">Cobertura de China y América Latina</div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
