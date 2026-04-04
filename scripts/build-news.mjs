@@ -44,10 +44,11 @@ function readPosts() {
     const data = parsed.data || {};
 
     return {
-      id: ensureString(data.id, file.replace(/\.md$/, "")),
-      date: ensureString(data.date, ""),
-      image: ensureString(data.image, ""),
-      tags: ensureArray(data.tags),
+        id: ensureString(data.id, file.replace(/\.md$/, "")),
+        date: ensureString(data.date, ""),
+        section: ensureString(data.section, ""),
+        image: normalizeImagePath(data.image),
+        tags: ensureArray(data.tags),
       category: {
         es: ensureString(data.category?.es, ""),
         en: ensureString(data.category?.en, ""),
