@@ -2,11 +2,7 @@
 id: 0403-silver-digital-life
 date: 2026-04-03
 section: china
-image: image/posts/4/3.jpg
-category:
-  es: Sociedad
-  en: Society
-  zh: 社会
+image: image/posts/04/3.jpg
 title:
   es: Los mayores encuentran nueva vitalidad en la era digital
   en: Older generations find new vitality in the digital age
