@@ -5,9 +5,9 @@ section: economy
 image: image/posts/0403/1.jpg
 tags:
 category:
-  es: 
-  en: 
-  zh: 
+  es: Economía
+  en: Economy
+  zh: 经贸
 title:
   es: China y América Latina amplían nuevos espacios de cooperación
   en: China and Latin America expand new areas of cooperation
