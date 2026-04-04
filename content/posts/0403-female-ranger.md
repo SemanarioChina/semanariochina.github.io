@@ -3,11 +3,6 @@ id: 0403-female-ranger
 date: 2026-04-03
 section: china
 image: /image/posts/0403/cover.jpg
-tags:
-category:
-  es: Economía
-  en: Economy
-  zh: 经贸
 title:
   es: Las guardabosques desafían los bosques nevados para proteger a tigres y leopardos
   en: Female rangers brave snowy forests to protect tigers, leopards
