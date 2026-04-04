@@ -7,12 +7,16 @@
   --blue-deep: #3b82c4;
   --red: #c62828;
   --bg: #f6f8f7;
+  --bg-soft: #eef5f2;
   --card: #ffffff;
   --text: #17202a;
   --muted: #6b7280;
   --border: #dce5e1;
   --shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+  --shadow-soft: 0 6px 18px rgba(0, 0, 0, 0.06);
   --radius: 18px;
+  --radius-small: 12px;
+  --max-width: 1180px;
 }
 
 * {
@@ -27,8 +31,8 @@ body {
   margin: 0;
   font-family: Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
   background:
-    radial-gradient(circle at top left, rgba(116, 172, 223, 0.16), transparent 25%),
-    radial-gradient(circle at top right, rgba(242, 201, 76, 0.18), transparent 22%),
+    radial-gradient(circle at top left, rgba(116, 172, 223, 0.16), transparent 24%),
+    radial-gradient(circle at top right, rgba(242, 201, 76, 0.18), transparent 20%),
     linear-gradient(180deg, #f8fbfa 0%, #f4f7f8 100%);
   color: var(--text);
   line-height: 1.7;
@@ -45,13 +49,20 @@ img {
 }
 
 .container {
-  width: min(1180px, 92%);
+  width: min(var(--max-width), 92%);
   margin: 0 auto;
 }
 
+/* 顶部 */
+
 .top-strip {
   height: 8px;
-  background: linear-gradient(90deg, var(--green) 0 33%, var(--yellow) 33% 66%, var(--blue) 66% 100%);
+  background: linear-gradient(
+    90deg,
+    var(--green) 0 33%,
+    var(--yellow) 33% 66%,
+    var(--blue) 66% 100%
+  );
 }
 
 .site-header {
@@ -104,9 +115,11 @@ img {
 .site-subtitle {
   margin: 10px 0 0;
   color: var(--muted);
-  max-width: 620px;
+  max-width: 680px;
   font-size: 16px;
 }
+
+/* 语言切换 */
 
 .lang-switcher {
   display: flex;
@@ -123,18 +136,20 @@ img {
   cursor: pointer;
   background: #eef4f2;
   color: var(--green-dark);
-  transition: 0.2s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
 
 .lang-btn:hover {
   transform: translateY(-1px);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-soft);
 }
 
 .lang-btn.active {
   background: linear-gradient(90deg, var(--green), var(--blue-deep));
   color: #fff;
 }
+
+/* 顶部导航 */
 
 .main-nav {
   display: flex;
@@ -144,13 +159,38 @@ img {
 }
 
 .nav-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 8px 14px;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(11, 122, 92, 0.10), rgba(116, 172, 223, 0.12));
+  background: linear-gradient(
+    90deg,
+    rgba(11, 122, 92, 0.10),
+    rgba(116, 172, 223, 0.12)
+  );
   color: var(--green-dark);
   font-size: 14px;
   font-weight: 700;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
+
+.nav-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+  background: linear-gradient(
+    90deg,
+    rgba(11, 122, 92, 0.16),
+    rgba(116, 172, 223, 0.18)
+  );
+}
+
+.active-nav {
+  background: linear-gradient(90deg, var(--green), var(--blue-deep));
+  color: #fff !important;
+}
+
+/* 首页布局 */
 
 .main-home {
   padding: 34px 0 60px;
@@ -173,12 +213,19 @@ img {
   box-shadow: var(--shadow);
 }
 
+/* 头条区 */
+
+.hero-card {
+  overflow: hidden;
+}
+
 .hero-image {
   width: 100%;
   height: 420px;
   object-fit: cover;
   border-top-left-radius: var(--radius);
   border-top-right-radius: var(--radius);
+  background: #e9efee;
 }
 
 .hero-content {
@@ -191,7 +238,11 @@ img {
   border-radius: 999px;
   font-size: 13px;
   font-weight: 800;
-  background: linear-gradient(90deg, rgba(242, 201, 76, 0.28), rgba(116, 172, 223, 0.24));
+  background: linear-gradient(
+    90deg,
+    rgba(242, 201, 76, 0.28),
+    rgba(116, 172, 223, 0.24)
+  );
   color: var(--green-dark);
   margin-bottom: 14px;
 }
@@ -216,6 +267,8 @@ img {
   color: var(--muted);
   font-size: 14px;
 }
+
+/* 右侧栏 */
 
 .sidebar-panel {
   padding: 20px;
@@ -261,6 +314,8 @@ img {
   color: var(--red);
 }
 
+/* 推荐阅读 */
+
 .section-block {
   margin-top: 34px;
 }
@@ -273,17 +328,19 @@ img {
 
 .news-card {
   overflow: hidden;
-  transition: 0.2s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .news-card:hover {
   transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.1);
 }
 
 .news-card img {
   width: 100%;
   height: 220px;
   object-fit: cover;
+  background: #e9efee;
 }
 
 .news-card-content {
@@ -315,20 +372,7 @@ img {
   font-size: 15px;
 }
 
-.site-footer {
-  margin-top: 40px;
-  background: linear-gradient(90deg, var(--green-dark), var(--blue-deep));
-  color: #eaf3f5;
-  padding: 24px 0;
-}
-
-.footer-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-  font-size: 14px;
-}
+/* 文章页 */
 
 .article-page {
   padding: 30px 0 60px;
@@ -378,6 +422,11 @@ img {
   object-fit: cover;
   border-radius: 14px;
   margin-bottom: 26px;
+  background: #e9efee;
+}
+
+.article-body {
+  color: var(--text);
 }
 
 .article-body p {
@@ -385,10 +434,68 @@ img {
   margin: 0 0 18px;
 }
 
-.active-nav {
-  background: linear-gradient(90deg, var(--green), var(--blue-deep));
-  color: #fff !important;
+.article-body h2,
+.article-body h3,
+.article-body h4 {
+  margin: 28px 0 14px;
+  line-height: 1.35;
+  color: var(--green-dark);
 }
+
+.article-body ul,
+.article-body ol {
+  margin: 0 0 18px 24px;
+}
+
+.article-body li {
+  margin-bottom: 8px;
+}
+
+.article-body blockquote {
+  margin: 22px 0;
+  padding: 14px 18px;
+  border-left: 4px solid var(--blue-deep);
+  background: #f3f8fc;
+  border-radius: 0 10px 10px 0;
+  color: #334155;
+}
+
+.article-body img {
+  margin: 22px 0;
+  border-radius: 12px;
+}
+
+.article-body a {
+  color: var(--blue-deep);
+  text-decoration: underline;
+}
+
+/* 页脚 */
+
+.site-footer {
+  margin-top: 40px;
+  background: linear-gradient(90deg, var(--green-dark), var(--blue-deep));
+  color: #eaf3f5;
+  padding: 24px 0;
+}
+
+.footer-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 14px;
+}
+
+/* 空状态 */
+
+.empty-state {
+  padding: 28px 24px;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+/* 移动端 */
 
 @media (max-width: 980px) {
   .hero-layout {
@@ -422,11 +529,37 @@ img {
     font-size: 34px;
   }
 
+  .small-title {
+    font-size: 30px;
+  }
+
   .article-box {
     padding: 22px;
   }
 
+  .hero-content {
+    padding: 20px;
+  }
+
+  .news-card-content {
+    padding: 16px;
+  }
+
   .article-body p {
     font-size: 17px;
+  }
+
+  .main-nav {
+    gap: 8px;
+  }
+
+  .nav-pill {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .lang-btn {
+    padding: 9px 14px;
+    font-size: 13px;
   }
 }
