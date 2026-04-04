@@ -8,9 +8,6 @@ title:
   en: Small fruit, big reach China's citrus goes global
   zh: 看小小中国柑橘如何香飘四海
 summary:
-  es: Desde el auge del limón para bebidas hasta la expansión de la cadena de frío y las exportaciones, la industria citrícola de China acelera su modernización en toda la cadena. Impulsados por nuevas variedades, agricultura inteligente y logística eficiente, cada vez más cítricos chinos llegan a consumidores de todo el mundo.
-  en: From booming lemonade consumption to expanding cold-chain logistics and exports, China's citrus industry is upgrading across the entire value chain. Driven by new varieties, smart farming and efficient logistics, more Chinese citrus fruits are reaching consumers around the world.
-  zh: 从柠檬饮品走俏，到冷链物流提速、鲜果加快出海，中国柑橘产业正加速全链条升级。依托新品种培育、智慧农业和高效物流，越来越多中国柑橘正走向全球消费者。
 ---
 <!-- home china latam economy culture special -->
 :::es
