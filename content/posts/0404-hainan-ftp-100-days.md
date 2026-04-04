@@ -8,9 +8,6 @@ title:
   en: Hainan FTP off to a strong start after 100 days
   zh: 全岛封关运作100天，海南自贸港发展活力快速释放
 summary:
-  es: A cien días del inicio de la operación aduanera independiente en toda la isla, los efectos de las políticas del Puerto de Libre Comercio de Hainan se hacen cada vez más visibles. Con un crecimiento sólido del comercio exterior, las ventas duty free, la inversión y el registro de nuevas entidades de mercado, Hainan acelera la construcción de un entorno de negocios de primer nivel y fortalece nuevos motores para un desarrollo de alta calidad.
-  en: One hundred days after launching island-wide independent customs operations, the Hainan Free Trade Port is showing stronger policy effects and rising development vitality. With robust growth in foreign trade, offshore duty-free sales, investment and new market entities, Hainan is accelerating efforts to build a first-class business environment and foster new drivers for high-quality development.
-  zh: 全岛封关运作100天来，海南自由贸易港政策效应持续显现，发展活力加快释放。随着外贸、离岛免税、投资和经营主体数量稳步增长，海南正加快打造一流营商环境，培育高质量发展新动能。
 ---
 <!-- home china latam economy culture special -->
 :::es
