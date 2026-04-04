@@ -112,9 +112,19 @@ function renderCommonUI(lang) {
   if (back) back.textContent = text.back;
 
   if (nav) {
-    nav.innerHTML = text.nav.map(item => `<span class="nav-pill">${item}</span>`).join("");
-  }
+  const currentCategory = getCategory();
 
+  nav.innerHTML = text.nav.map(item => {
+    const href =
+      item.slug === "home"
+        ? `index.html?lang=${lang}`
+        : `index.html?lang=${lang}&category=${item.slug}`;
+
+    const activeClass = currentCategory === item.slug ? " active-nav" : "";
+
+    return `<a class="nav-pill${activeClass}" href="${href}">${item.label}</a>`;
+  }).join("");
+}
   document.documentElement.lang = lang;
 }
 
@@ -125,22 +135,28 @@ async function loadNewsData() {
 }
 
 function renderHome(lang, newsData) {
+  const currentCategory = getCategory();
+
+let filteredData = newsData;
+if (currentCategory !== "home") {
+  filteredData = newsData.filter(story => story.section === currentCategory);
+}
   const text = uiText[lang];
   const hero = document.getElementById("hero-card");
   const latestPanel = document.getElementById("latest-panel");
   const featuredTitle = document.getElementById("featured-title");
   const featuredGrid = document.getElementById("featured-grid");
 
-  if (!newsData.length) {
+  if (!filteredData.length) {
     if (hero) hero.innerHTML = "<div class='hero-content'><p>No posts yet.</p></div>";
     if (latestPanel) latestPanel.innerHTML = "";
     if (featuredGrid) featuredGrid.innerHTML = "";
     return;
   }
 
-  const mainStory = newsData[0];
-  const latestStories = newsData.slice(0, 5);
-  const featuredStories = newsData.slice(1, 7);
+  const mainStory = filteredData[0];
+  const latestStories = filteredData.slice(0, 5);
+  const featuredStories = filteredData.slice(1, 7);
 
   hero.innerHTML = `
     <a href="article.html?id=${mainStory.id}&lang=${lang}">
