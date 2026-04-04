@@ -7,14 +7,13 @@ const POSTS_DIR = path.join(process.cwd(), "content", "posts");
 const OUTPUT_FILE = path.join(process.cwd(), "news-data.json");
 
 function extractLangBlock(content, lang) {
-  const regex = new RegExp(`:::${lang}\\s*([\\s\\S]*?):::`,"m");
+  const regex = new RegExp(`:::${lang}\\s*([\\s\\S]*?):::`, "m");
   const match = content.match(regex);
   return match ? match[1].trim() : "";
 }
 
-function toParagraphArray(markdownText) {
-  const html = marked.parse(markdownText || "");
-  return html;
+function toHtml(markdownText) {
+  return marked.parse(markdownText || "");
 }
 
 function ensureString(value, fallback = "") {
@@ -23,6 +22,12 @@ function ensureString(value, fallback = "") {
 
 function ensureArray(value) {
   return Array.isArray(value) ? value : [];
+}
+
+function normalizeImagePath(value = "") {
+  if (!value) return "";
+  const clean = String(value).replace(/^\.?\//, "");
+  return "/" + clean;
 }
 
 function readPosts() {
@@ -44,11 +49,11 @@ function readPosts() {
     const data = parsed.data || {};
 
     return {
-        id: ensureString(data.id, file.replace(/\.md$/, "")),
-        date: ensureString(data.date, ""),
-        section: ensureString(data.section, ""),
-        image: normalizeImagePath(data.image),
-        tags: ensureArray(data.tags),
+      id: ensureString(data.id, file.replace(/\.md$/, "")),
+      date: ensureString(data.date, ""),
+      section: ensureString(data.section, ""),
+      image: normalizeImagePath(data.image),
+      tags: ensureArray(data.tags),
       category: {
         es: ensureString(data.category?.es, ""),
         en: ensureString(data.category?.en, ""),
@@ -65,9 +70,9 @@ function readPosts() {
         zh: ensureString(data.summary?.zh, "")
       },
       bodyHtml: {
-        es: toParagraphArray(esBodyMd),
-        en: toParagraphArray(enBodyMd),
-        zh: toParagraphArray(zhBodyMd)
+        es: toHtml(esBodyMd),
+        en: toHtml(enBodyMd),
+        zh: toHtml(zhBodyMd)
       }
     };
   });
