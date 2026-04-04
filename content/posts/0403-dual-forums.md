@@ -1,11 +1,7 @@
 ---
-id: test-2026-04-03
+id: 0403-dual-forums
 date: 2026-04-03
 image: image/posts/0402/1.jpg
-tags:
-  - 中国
-  - 拉美
-  - 经贸
 category:
   es: Economía
   en: Economy
@@ -15,9 +11,9 @@ title:
   en: China and Latin America expand new areas of cooperation
   zh: 中国与拉美拓展合作新空间
 summary:
-  es: Una nota de prueba para verificar la publicación automática en tres idiomas.
-  en: A test story to verify automatic publishing in three linked languages.
-  zh: 这是一篇测试稿，用来检查三语联动自动发布是否正常。
+  es: 
+  en: 
+  zh: 
 ---
 
 :::es
