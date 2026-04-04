@@ -55,24 +55,54 @@ const uiText = {
   }
 };
 
+function getParams() {
+  return new URLSearchParams(window.location.search);
+}
+
 function getLang() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("lang") || "es";
+  const lang = getParams().get("lang") || "es";
+  return ["es", "en", "zh"].includes(lang) ? lang : "es";
 }
 
 function getCategory() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("category") || "home";
+  return getParams().get("category") || "home";
+}
+
+function getArticleId() {
+  return getParams().get("id") || "";
+}
+
+function buildIndexUrl(lang, category = "home") {
+  const url = new URL("index.html", window.location.origin + window.location.pathname);
+  url.searchParams.set("lang", lang);
+  if (category !== "home") {
+    url.searchParams.set("category", category);
+  }
+  return `${url.pathname}${url.search}`;
+}
+
+function buildArticleUrl(id, lang) {
+  const url = new URL("article.html", window.location.origin + window.location.pathname);
+  url.searchParams.set("id", id);
+  url.searchParams.set("lang", lang);
+  return `${url.pathname}${url.search}`;
 }
 
 function setLang(lang) {
-  const url = new URL(window.location.href);
-  url.searchParams.set("lang", lang);
-  window.location.href = url.toString();
+  const page = document.body.dataset.page;
+  const currentCategory = getCategory();
+  const currentId = getArticleId();
+
+  if (page === "article" && currentId) {
+    window.location.href = buildArticleUrl(currentId, lang);
+    return;
+  }
+
+  window.location.href = buildIndexUrl(lang, currentCategory);
 }
 
 function setLanguageButtons(lang) {
-  document.querySelectorAll(".lang-btn").forEach(btn => {
+  document.querySelectorAll(".lang-btn").forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.lang === lang);
     btn.addEventListener("click", () => setLang(btn.dataset.lang));
   });
@@ -94,24 +124,33 @@ function renderCommonUI(lang) {
   if (nav) {
     const currentCategory = getCategory();
 
-    nav.innerHTML = text.nav.map(item => {
-      const href =
-        item.slug === "home"
-          ? `index.html?lang=${lang}`
-          : `index.html?lang=${lang}&category=${item.slug}`;
-
-      const activeClass = currentCategory === item.slug ? " active-nav" : "";
-      return `<a class="nav-pill${activeClass}" href="${href}">${item.label}</a>`;
-    }).join("");
+    nav.innerHTML = text.nav
+      .map((item) => {
+        const href = buildIndexUrl(lang, item.slug);
+        const activeClass = currentCategory === item.slug ? " active-nav" : "";
+        return `<a class="nav-pill${activeClass}" href="${href}">${item.label}</a>`;
+      })
+      .join("");
   }
 
   document.documentElement.lang = lang;
 }
 
 async function loadNewsData() {
-  const res = await fetch(`./news-data.json?v=${Date.now()}`);
-  if (!res.ok) throw new Error("Failed to load news-data.json");
+  const res = await fetch(`./news-data.json?v=${Date.now()}`, { cache: "no-store" });
+  if (!res.ok) {
+    throw new Error("Failed to load news-data.json");
+  }
   return await res.json();
+}
+
+function getFilteredData(newsData, category) {
+  if (category === "home") return newsData;
+  return newsData.filter((story) => story.section === category);
+}
+
+function createEmptyState(text) {
+  return `<div class="empty-state">${text}</div>`;
 }
 
 function renderHome(lang, newsData) {
@@ -122,19 +161,11 @@ function renderHome(lang, newsData) {
   const featuredGrid = document.getElementById("featured-grid");
 
   const currentCategory = getCategory();
-
-  let filteredData = newsData;
-  if (currentCategory !== "home") {
-    filteredData = newsData.filter(story => story.section === currentCategory);
-  }
+  const filteredData = getFilteredData(newsData, currentCategory);
 
   if (!filteredData.length) {
-    if (hero) {
-      hero.innerHTML = `<div class="hero-content"><p>${text.noPosts}</p></div>`;
-    }
-    if (latestPanel) {
-      latestPanel.innerHTML = `<h2 class="panel-title">${text.latest}</h2>`;
-    }
+    if (hero) hero.innerHTML = createEmptyState(text.noPosts);
+    if (latestPanel) latestPanel.innerHTML = `<h2 class="panel-title">${text.latest}</h2>`;
     if (featuredTitle) featuredTitle.textContent = text.featured;
     if (featuredGrid) featuredGrid.innerHTML = "";
     return;
@@ -146,16 +177,16 @@ function renderHome(lang, newsData) {
 
   if (hero) {
     hero.innerHTML = `
-      <a href="article.html?id=${mainStory.id}&lang=${lang}">
-        <img class="hero-image" src="${mainStory.image}" alt="${mainStory.title[lang] || ""}">
+      <a href="${buildArticleUrl(mainStory.id, lang)}">
+        <img class="hero-image" src="${mainStory.image || ""}" alt="${mainStory.title?.[lang] || ""}">
       </a>
       <div class="hero-content">
-        <div class="label-chip">${mainStory.category[lang] || ""}</div>
+        <div class="label-chip">${mainStory.category?.[lang] || ""}</div>
         <h2 class="hero-title">
-          <a href="article.html?id=${mainStory.id}&lang=${lang}">${mainStory.title[lang] || ""}</a>
+          <a href="${buildArticleUrl(mainStory.id, lang)}">${mainStory.title?.[lang] || ""}</a>
         </h2>
-        <p class="hero-summary">${mainStory.summary[lang] || ""}</p>
-        <div class="meta-line">${mainStory.date} ｜ ${text.metaSource}</div>
+        <p class="hero-summary">${mainStory.summary?.[lang] || ""}</p>
+        <div class="meta-line">${mainStory.date || ""} ｜ ${text.metaSource}</div>
       </div>
     `;
   }
@@ -163,60 +194,78 @@ function renderHome(lang, newsData) {
   if (latestPanel) {
     latestPanel.innerHTML = `
       <h2 class="panel-title">${text.latest}</h2>
-      ${latestStories.map(story => `
-        <div class="latest-item">
-          <a href="article.html?id=${story.id}&lang=${lang}">${story.title[lang] || ""}</a>
-          <div class="meta-line">${story.date}</div>
-        </div>
-      `).join("")}
+      ${latestStories
+        .map(
+          (story) => `
+            <div class="latest-item">
+              <a href="${buildArticleUrl(story.id, lang)}">${story.title?.[lang] || ""}</a>
+              <div class="meta-line">${story.date || ""}</div>
+            </div>
+          `
+        )
+        .join("")}
     `;
   }
 
-  if (featuredTitle) featuredTitle.textContent = text.featured;
+  if (featuredTitle) {
+    featuredTitle.textContent = text.featured;
+  }
 
   if (featuredGrid) {
-    featuredGrid.innerHTML = featuredStories.map(story => `
-      <article class="news-card">
-        <a href="article.html?id=${story.id}&lang=${lang}">
-          <img src="${story.image}" alt="${story.title[lang] || ""}">
-        </a>
-        <div class="news-card-content">
-          <div class="card-category">${story.category[lang] || ""}</div>
-          <h3>
-            <a href="article.html?id=${story.id}&lang=${lang}">${story.title[lang] || ""}</a>
-          </h3>
-          <p>${story.summary[lang] || ""}</p>
-          <div class="meta-line">${story.date}</div>
-        </div>
-      </article>
-    `).join("");
+    featuredGrid.innerHTML = featuredStories
+      .map(
+        (story) => `
+          <article class="news-card">
+            <a href="${buildArticleUrl(story.id, lang)}">
+              <img src="${story.image || ""}" alt="${story.title?.[lang] || ""}">
+            </a>
+            <div class="news-card-content">
+              <div class="card-category">${story.category?.[lang] || ""}</div>
+              <h3>
+                <a href="${buildArticleUrl(story.id, lang)}">${story.title?.[lang] || ""}</a>
+              </h3>
+              <p>${story.summary?.[lang] || ""}</p>
+              <div class="meta-line">${story.date || ""}</div>
+            </div>
+          </article>
+        `
+      )
+      .join("");
   }
 }
 
 function renderArticle(lang, newsData) {
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get("id") || newsData[0]?.id;
-  const story = newsData.find(item => item.id === id) || newsData[0];
+  const id = getArticleId() || newsData[0]?.id;
+  const story = newsData.find((item) => item.id === id) || newsData[0];
   const text = uiText[lang];
 
   if (!story) return;
 
-  document.title = `${story.title[lang] || ""} - Semanario China`;
+  document.title = `${story.title?.[lang] || ""} - Semanario China`;
 
   const category = document.getElementById("article-category");
   const title = document.getElementById("article-title");
   const meta = document.getElementById("article-meta");
   const image = document.getElementById("article-image");
   const body = document.getElementById("article-body");
+  const back = document.getElementById("back-link");
 
-  if (category) category.textContent = story.category[lang] || "";
-  if (title) title.textContent = story.title[lang] || "";
-  if (meta) meta.textContent = `${story.date} ｜ ${text.metaSource}`;
+  if (category) category.textContent = story.category?.[lang] || "";
+  if (title) title.textContent = story.title?.[lang] || "";
+  if (meta) meta.textContent = `${story.date || ""} ｜ ${text.metaSource}`;
+
   if (image) {
-    image.src = story.image;
-    image.alt = story.title[lang] || "";
+    image.src = story.image || "";
+    image.alt = story.title?.[lang] || "";
+    image.style.display = story.image ? "block" : "none";
   }
-  if (body) body.innerHTML = story.bodyHtml[lang] || "";
+
+  if (body) body.innerHTML = story.bodyHtml?.[lang] || "";
+
+  if (back) {
+    const backCategory = story.section || "home";
+    back.href = buildIndexUrl(lang, backCategory);
+  }
 }
 
 async function init() {
@@ -228,10 +277,27 @@ async function init() {
 
   try {
     const newsData = await loadNewsData();
-    if (page === "home") renderHome(lang, newsData);
-    if (page === "article") renderArticle(lang, newsData);
-  } catch (err) {
-    console.error(err);
+
+    if (page === "home") {
+      renderHome(lang, newsData);
+    }
+
+    if (page === "article") {
+      renderArticle(lang, newsData);
+    }
+  } catch (error) {
+    console.error(error);
+
+    const hero = document.getElementById("hero-card");
+    const articleBody = document.getElementById("article-body");
+
+    if (hero) {
+      hero.innerHTML = `<div class="empty-state">Failed to load content.</div>`;
+    }
+
+    if (articleBody) {
+      articleBody.innerHTML = `<p>Failed to load content.</p>`;
+    }
   }
 }
 
