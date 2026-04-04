@@ -1,7 +1,7 @@
 const uiText = {
   es: {
     kicker: "Noticias sobre China para América Latina",
-    subtitle: "Ventana bilingüe y trilingüe sobre China, América Latina y el mundo.",
+    subtitle: "Ventana trilingüe sobre China, América Latina y el mundo.",
     nav: ["Portada", "China", "América Latina", "Economía", "Cultura", "Especiales"],
     latest: "Últimas noticias",
     featured: "Lecturas recomendadas",
@@ -70,27 +70,40 @@ function renderCommonUI(lang) {
   document.documentElement.lang = lang;
 }
 
-function renderHome(lang) {
+async function loadNewsData() {
+  const res = await fetch(`./news-data.json?v=${Date.now()}`);
+  if (!res.ok) throw new Error("Failed to load news-data.json");
+  return await res.json();
+}
+
+function renderHome(lang, newsData) {
   const text = uiText[lang];
   const hero = document.getElementById("hero-card");
   const latestPanel = document.getElementById("latest-panel");
   const featuredTitle = document.getElementById("featured-title");
   const featuredGrid = document.getElementById("featured-grid");
 
+  if (!newsData.length) {
+    if (hero) hero.innerHTML = "<div class='hero-content'><p>No posts yet.</p></div>";
+    if (latestPanel) latestPanel.innerHTML = "";
+    if (featuredGrid) featuredGrid.innerHTML = "";
+    return;
+  }
+
   const mainStory = newsData[0];
-  const latestStories = newsData.slice(0, 4);
-  const featuredStories = newsData.slice(1);
+  const latestStories = newsData.slice(0, 5);
+  const featuredStories = newsData.slice(1, 7);
 
   hero.innerHTML = `
     <a href="article.html?id=${mainStory.id}&lang=${lang}">
       <img class="hero-image" src="${mainStory.image}" alt="${mainStory.title[lang]}">
     </a>
     <div class="hero-content">
-      <div class="label-chip">${mainStory.category[lang]}</div>
+      <div class="label-chip">${mainStory.category[lang] || ""}</div>
       <h2 class="hero-title">
-        <a href="article.html?id=${mainStory.id}&lang=${lang}">${mainStory.title[lang]}</a>
+        <a href="article.html?id=${mainStory.id}&lang=${lang}">${mainStory.title[lang] || ""}</a>
       </h2>
-      <p class="hero-summary">${mainStory.summary[lang]}</p>
+      <p class="hero-summary">${mainStory.summary[lang] || ""}</p>
       <div class="meta-line">${mainStory.date} ｜ ${text.metaSource}</div>
     </div>
   `;
@@ -99,7 +112,7 @@ function renderHome(lang) {
     <h2 class="panel-title">${text.latest}</h2>
     ${latestStories.map(story => `
       <div class="latest-item">
-        <a href="article.html?id=${story.id}&lang=${lang}">${story.title[lang]}</a>
+        <a href="article.html?id=${story.id}&lang=${lang}">${story.title[lang] || ""}</a>
         <div class="meta-line">${story.date}</div>
       </div>
     `).join("")}
@@ -110,50 +123,55 @@ function renderHome(lang) {
   featuredGrid.innerHTML = featuredStories.map(story => `
     <article class="news-card">
       <a href="article.html?id=${story.id}&lang=${lang}">
-        <img src="${story.image}" alt="${story.title[lang]}">
+        <img src="${story.image}" alt="${story.title[lang] || ""}">
       </a>
       <div class="news-card-content">
-        <div class="card-category">${story.category[lang]}</div>
+        <div class="card-category">${story.category[lang] || ""}</div>
         <h3>
-          <a href="article.html?id=${story.id}&lang=${lang}">${story.title[lang]}</a>
+          <a href="article.html?id=${story.id}&lang=${lang}">${story.title[lang] || ""}</a>
         </h3>
-        <p>${story.summary[lang]}</p>
+        <p>${story.summary[lang] || ""}</p>
         <div class="meta-line">${story.date}</div>
       </div>
     </article>
   `).join("");
 }
 
-function renderArticle(lang) {
+function renderArticle(lang, newsData) {
   const params = new URLSearchParams(window.location.search);
-  const id = params.get("id") || newsData[0].id;
+  const id = params.get("id") || newsData[0]?.id;
   const story = newsData.find(item => item.id === id) || newsData[0];
   const text = uiText[lang];
 
+  if (!story) return;
+
   document.title = `${story.title[lang]} - Semanario China`;
 
-  document.getElementById("article-category").textContent = story.category[lang];
-  document.getElementById("article-title").textContent = story.title[lang];
+  document.getElementById("article-category").textContent = story.category[lang] || "";
+  document.getElementById("article-title").textContent = story.title[lang] || "";
   document.getElementById("article-meta").textContent = `${story.date} ｜ ${text.metaSource}`;
 
   const image = document.getElementById("article-image");
   image.src = story.image;
-  image.alt = story.title[lang];
+  image.alt = story.title[lang] || "";
 
-  document.getElementById("article-body").innerHTML = story.body[lang]
-    .map(paragraph => `<p>${paragraph}</p>`)
-    .join("");
+  document.getElementById("article-body").innerHTML = story.bodyHtml[lang] || "";
 }
 
-function init() {
+async function init() {
   const lang = getLang();
   const page = document.body.dataset.page;
 
   setLanguageButtons(lang);
   renderCommonUI(lang);
 
-  if (page === "home") renderHome(lang);
-  if (page === "article") renderArticle(lang);
+  try {
+    const newsData = await loadNewsData();
+    if (page === "home") renderHome(lang, newsData);
+    if (page === "article") renderArticle(lang, newsData);
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 init();
