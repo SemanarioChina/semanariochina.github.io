@@ -4,8 +4,8 @@ date: 2026-04-04
 section: special
 image: 
 title:
-  es: Los misiles como “filo”: Japón se empuja a sí mismo hacia un borde peligroso
-  en: Missiles as a “blade”: Japan pushes itself onto a dangerous edge
+  es: Los misiles como “filo” Japón se empuja a sí mismo hacia un borde peligroso
+  en: Missiles as a “blade” Japan pushes itself onto a dangerous edge
   zh: 导弹为“刃”，日本将自己推上危险的刀锋
 summary:
   es: Un comentario firmado por Zhong Sheng señala que el despliegue por parte de Japón de misiles de largo alcance con capacidad ofensiva constituye otro paso alejado del marco pacifista de la posguerra y agrava los riesgos para la paz regional. El artículo sostiene que, bajo la narrativa de la “seguridad”, Tokio está impulsando la remilitarización, lo que ha generado preocupación entre los vecinos asiáticos y oposición dentro de Japón.
