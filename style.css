@@ -385,6 +385,11 @@ img {
   margin: 0 0 18px;
 }
 
+.active-nav {
+  background: linear-gradient(90deg, var(--green), var(--blue-deep));
+  color: #fff !important;
+}
+
 @media (max-width: 980px) {
   .hero-layout {
     grid-template-columns: 1fr;
