@@ -1,7 +1,7 @@
 ---
 id: female-ranger-2026-04-03
 date: 2026-04-03
-image: /images/posts/female-ranger-2026-04-03/cover.jpg
+image: /image/posts/female-ranger-2026-04-03/cover.jpg
 tags:
 category:
   es: Economía
