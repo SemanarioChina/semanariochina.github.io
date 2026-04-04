@@ -3,8 +3,8 @@ date: 2026-04-04
 section: economy
 image: image/posts/04/4.jpg
 title:
-  es: Pequeña fruta, gran alcance: los cítricos chinos llegan al mundo
-  en: Small fruit, big reach: China's citrus goes global
+  es: Pequeña fruta, gran alcance los cítricos chinos llegan al mundo
+  en: Small fruit, big reach China's citrus goes global
   zh: 看小小中国柑橘如何香飘四海
 summary:
   es: Desde el auge del limón para bebidas hasta la expansión de la cadena de frío y las exportaciones, la industria citrícola de China acelera su modernización en toda la cadena. Impulsados por nuevas variedades, agricultura inteligente y logística eficiente, cada vez más cítricos chinos llegan a consumidores de todo el mundo.
