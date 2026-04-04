@@ -21,13 +21,46 @@ function ensureString(value, fallback = "") {
 }
 
 function ensureArray(value) {
-  return Array.isArray(value) ? value : [];
+  if (Array.isArray(value)) return value;
+  if (typeof value === "string" && value.trim()) {
+    return [value.trim()];
+  }
+  return [];
 }
 
 function normalizeImagePath(value = "") {
   if (!value) return "";
   const clean = String(value).replace(/^\.?\//, "");
   return "/" + clean;
+}
+
+function normalizeCategory(value) {
+  if (typeof value === "string") {
+    const text = value.trim();
+    return {
+      es: text,
+      en: text,
+      zh: text
+    };
+  }
+
+  if (value && typeof value === "object") {
+    const es = ensureString(value.es, "").trim();
+    const en = ensureString(value.en, "").trim();
+    const zh = ensureString(value.zh, "").trim();
+
+    return {
+      es: es || en || zh || "",
+      en: en || es || zh || "",
+      zh: zh || en || es || ""
+    };
+  }
+
+  return {
+    es: "",
+    en: "",
+    zh: ""
+  };
 }
 
 function readPosts() {
@@ -54,11 +87,7 @@ function readPosts() {
       section: ensureString(data.section, ""),
       image: normalizeImagePath(data.image),
       tags: ensureArray(data.tags),
-      category: {
-        es: ensureString(data.category?.es, ""),
-        en: ensureString(data.category?.en, ""),
-        zh: ensureString(data.category?.zh, "")
-      },
+      category: normalizeCategory(data.category),
       title: {
         es: ensureString(data.title?.es, ""),
         en: ensureString(data.title?.en, ""),
