@@ -55,6 +55,39 @@ const uiText = {
   }
 };
 
+const sectionLabels = {
+  home: {
+    es: "Portada",
+    en: "Home",
+    zh: "首页"
+  },
+  china: {
+    es: "China",
+    en: "China",
+    zh: "中国"
+  },
+  latam: {
+    es: "América Latina",
+    en: "Latin America",
+    zh: "拉美"
+  },
+  economy: {
+    es: "Economía",
+    en: "Economy",
+    zh: "经贸"
+  },
+  culture: {
+    es: "Cultura",
+    en: "Culture",
+    zh: "文化"
+  },
+  special: {
+    es: "Especiales",
+    en: "Special Reports",
+    zh: "专题"
+  }
+};
+
 function getParams() {
   return new URLSearchParams(window.location.search);
 }
@@ -73,18 +106,26 @@ function getArticleId() {
 }
 
 function buildIndexUrl(lang, category = "home") {
-  const url = new URL("index.html", window.location.origin + window.location.pathname);
+  const url = new URL(window.location.href);
+  url.pathname = "/index.html";
   url.searchParams.set("lang", lang);
-  if (category !== "home") {
+
+  if (category === "home") {
+    url.searchParams.delete("category");
+  } else {
     url.searchParams.set("category", category);
   }
+
+  url.searchParams.delete("id");
   return `${url.pathname}${url.search}`;
 }
 
 function buildArticleUrl(id, lang) {
-  const url = new URL("article.html", window.location.origin + window.location.pathname);
+  const url = new URL(window.location.href);
+  url.pathname = "/article.html";
   url.searchParams.set("id", id);
   url.searchParams.set("lang", lang);
+  url.searchParams.delete("category");
   return `${url.pathname}${url.search}`;
 }
 
@@ -106,6 +147,23 @@ function setLanguageButtons(lang) {
     btn.classList.toggle("active", btn.dataset.lang === lang);
     btn.addEventListener("click", () => setLang(btn.dataset.lang));
   });
+}
+
+function getCategoryLabel(story, lang) {
+  if (story.category?.[lang]) return story.category[lang];
+  if (story.category?.zh) return story.category.zh;
+  if (story.category?.en) return story.category.en;
+  if (story.category?.es) return story.category.es;
+
+  if (story.section && sectionLabels[story.section]?.[lang]) {
+    return sectionLabels[story.section][lang];
+  }
+
+  if (Array.isArray(story.tags) && story.tags.length > 0) {
+    return story.tags[0];
+  }
+
+  return "";
 }
 
 function renderCommonUI(lang) {
@@ -137,10 +195,14 @@ function renderCommonUI(lang) {
 }
 
 async function loadNewsData() {
-  const res = await fetch(`./news-data.json?v=${Date.now()}`, { cache: "no-store" });
+  const res = await fetch(`./news-data.json?v=${Date.now()}`, {
+    cache: "no-store"
+  });
+
   if (!res.ok) {
     throw new Error("Failed to load news-data.json");
   }
+
   return await res.json();
 }
 
@@ -181,7 +243,7 @@ function renderHome(lang, newsData) {
         <img class="hero-image" src="${mainStory.image || ""}" alt="${mainStory.title?.[lang] || ""}">
       </a>
       <div class="hero-content">
-        <div class="label-chip">${mainStory.category?.[lang] || ""}</div>
+        <div class="label-chip">${getCategoryLabel(mainStory, lang)}</div>
         <h2 class="hero-title">
           <a href="${buildArticleUrl(mainStory.id, lang)}">${mainStory.title?.[lang] || ""}</a>
         </h2>
@@ -220,7 +282,7 @@ function renderHome(lang, newsData) {
               <img src="${story.image || ""}" alt="${story.title?.[lang] || ""}">
             </a>
             <div class="news-card-content">
-              <div class="card-category">${story.category?.[lang] || ""}</div>
+              <div class="card-category">${getCategoryLabel(story, lang)}</div>
               <h3>
                 <a href="${buildArticleUrl(story.id, lang)}">${story.title?.[lang] || ""}</a>
               </h3>
@@ -250,7 +312,7 @@ function renderArticle(lang, newsData) {
   const body = document.getElementById("article-body");
   const back = document.getElementById("back-link");
 
-  if (category) category.textContent = story.category?.[lang] || "";
+  if (category) category.textContent = getCategoryLabel(story, lang);
   if (title) title.textContent = story.title?.[lang] || "";
   if (meta) meta.textContent = `${story.date || ""} ｜ ${text.metaSource}`;
 
