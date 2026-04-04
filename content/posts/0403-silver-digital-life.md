@@ -8,9 +8,6 @@ title:
   en: Older generations find new vitality in the digital age
   zh: 当银发族玩转数字新生活
 summary:
-  es: En China, cada vez más adultos mayores pasan de usuarios de internet a creadores de contenido. Desde un nonagenario que comparte su vida diaria hasta mayores que aprenden edición con ayuda de la IA, la llamada "generación plateada" está redefiniendo el envejecimiento en la era digital.
-  en: In China, more seniors are moving from internet users to content creators. From a 90-year-old sharing his daily life to older adults learning editing with AI, the silver generation is redefining aging in the digital era.
-  zh: 在中国，越来越多老年人正从网络使用者转变为内容创作者。从90岁老人的短视频日常到银发群体借助AI学习制作视频，“银发族”正在数字时代重新定义老年生活。
 ---
 
 :::es
