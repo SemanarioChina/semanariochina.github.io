@@ -4,7 +4,7 @@ date: 2026-04-04
 section: economy
 image: 
 title:
-  es: Un economista británico afirma que el desarrollo de China 
+  es: Un economista afirma que el desarrollo de China refleja la dirección central del progreso humano
   en: Core direction of human development reflected in China's development: British economist
   zh: 中国发展体现人类发展的核心方向
 summary:
