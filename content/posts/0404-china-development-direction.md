@@ -4,8 +4,8 @@ date: 2026-04-04
 section: economy
 image: 
 title:
-  es: Un economista afirma que el desarrollo de China refleja la dirección central del progreso humano
-  en: Core direction of human development reflected in China's development: British economist
+  es: Un economista británico afirma que el desarrollo de China refleja la dirección central del progreso humano
+  en: Core direction of human development reflected in China's development British economist
   zh: 中国发展体现人类发展的核心方向
 summary:
   es: El economista británico John Ross afirmó en una entrevista con People's Daily que la apertura sostenida de China no solo responde a la lógica de su propio desarrollo, sino que también ofrece una valiosa certeza en un mundo turbulento. A su juicio, la apuesta de China por la apertura de alto nivel, la innovación científica y tecnológica y la cooperación con otros países en desarrollo refleja una dirección central del progreso humano.
