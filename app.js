@@ -3,15 +3,20 @@ const uiText = {
     kicker: "Noticias sobre China para América Latina",
     subtitle: "Ventana trilingüe sobre China, América Latina y el mundo.",
     nav: [
-      { label: "Portada", slug: "home" },
-      { label: "China", slug: "china" },
-      { label: "América Latina", slug: "latam" },
-      { label: "Economía", slug: "economy" },
-      { label: "Cultura", slug: "culture" },
-      { label: "Especiales", slug: "special" }
+      { label: "Portada", type: "category", slug: "home" },
+      { label: "China", type: "category", slug: "china" },
+      { label: "América Latina", type: "category", slug: "latam" },
+      { label: "Economía", type: "category", slug: "economy" },
+      { label: "Cultura", type: "category", slug: "culture" },
+      { label: "Especiales", type: "category", slug: "special" },
+      { label: "Archivo", type: "archive" }
     ],
     latest: "Últimas noticias",
     featured: "Lecturas recomendadas",
+    archiveTitle: "Archivo completo",
+    archiveIntro: "Consulta todas las publicaciones históricas. Se muestran 10 al inicio y puedes cargar 10 más cada vez.",
+    loadMore: "Cargar más",
+    noMore: "No hay más artículos",
     footer: "Cobertura de China y América Latina",
     back: "← Volver a la portada",
     metaSource: "Semanario China",
@@ -21,15 +26,20 @@ const uiText = {
     kicker: "News on China for Latin America",
     subtitle: "A trilingual window on China, Latin America and the world.",
     nav: [
-      { label: "Home", slug: "home" },
-      { label: "China", slug: "china" },
-      { label: "Latin America", slug: "latam" },
-      { label: "Economy", slug: "economy" },
-      { label: "Culture", slug: "culture" },
-      { label: "Special Reports", slug: "special" }
+      { label: "Home", type: "category", slug: "home" },
+      { label: "China", type: "category", slug: "china" },
+      { label: "Latin America", type: "category", slug: "latam" },
+      { label: "Economy", type: "category", slug: "economy" },
+      { label: "Culture", type: "category", slug: "culture" },
+      { label: "Special Reports", type: "category", slug: "special" },
+      { label: "Archive", type: "archive" }
     ],
     latest: "Latest News",
     featured: "Recommended Reading",
+    archiveTitle: "Complete Archive",
+    archiveIntro: "Browse all historical posts. The page shows 10 at first, and each click loads 10 more.",
+    loadMore: "Load more",
+    noMore: "No more posts",
     footer: "Coverage of China and Latin America",
     back: "← Back to homepage",
     metaSource: "Semanario China",
@@ -39,15 +49,20 @@ const uiText = {
     kicker: "面向拉丁美洲的中国新闻",
     subtitle: "以西语、英语和中文呈现中国、拉美与世界的观察。",
     nav: [
-      { label: "首页", slug: "home" },
-      { label: "中国", slug: "china" },
-      { label: "拉美", slug: "latam" },
-      { label: "经贸", slug: "economy" },
-      { label: "文化", slug: "culture" },
-      { label: "专题", slug: "special" }
+      { label: "首页", type: "category", slug: "home" },
+      { label: "中国", type: "category", slug: "china" },
+      { label: "拉美", type: "category", slug: "latam" },
+      { label: "经贸", type: "category", slug: "economy" },
+      { label: "文化", type: "category", slug: "culture" },
+      { label: "专题", type: "category", slug: "special" },
+      { label: "全部文章", type: "archive" }
     ],
     latest: "最新消息",
     featured: "推荐阅读",
+    archiveTitle: "全部历史文章",
+    archiveIntro: "这里汇总展示所有历史文章。默认先显示10篇，每点击一次“更多”再增加10篇。",
+    loadMore: "更多",
+    noMore: "没有更多文章了",
     footer: "中国与拉美新闻观察",
     back: "← 返回首页",
     metaSource: "Semanario China",
@@ -86,6 +101,11 @@ const sectionLabels = {
     en: "Special Reports",
     zh: "专题"
   }
+};
+
+const archiveState = {
+  visibleCount: 10,
+  items: []
 };
 
 function getParams() {
@@ -129,6 +149,15 @@ function buildArticleUrl(id, lang) {
   return `${url.pathname}${url.search}`;
 }
 
+function buildArchiveUrl(lang) {
+  const url = new URL(window.location.href);
+  url.pathname = "/archive.html";
+  url.searchParams.set("lang", lang);
+  url.searchParams.delete("category");
+  url.searchParams.delete("id");
+  return `${url.pathname}${url.search}`;
+}
+
 function setLang(lang) {
   const page = document.body.dataset.page;
   const currentCategory = getCategory();
@@ -136,6 +165,11 @@ function setLang(lang) {
 
   if (page === "article" && currentId) {
     window.location.href = buildArticleUrl(currentId, lang);
+    return;
+  }
+
+  if (page === "archive") {
+    window.location.href = buildArchiveUrl(lang);
     return;
   }
 
@@ -173,6 +207,8 @@ function renderCommonUI(lang) {
   const nav = document.getElementById("main-nav");
   const footer = document.getElementById("footer-text");
   const back = document.getElementById("back-link");
+  const page = document.body.dataset.page;
+  const currentCategory = getCategory();
 
   if (kicker) kicker.textContent = text.kicker;
   if (subtitle) subtitle.textContent = text.subtitle;
@@ -180,12 +216,19 @@ function renderCommonUI(lang) {
   if (back) back.textContent = text.back;
 
   if (nav) {
-    const currentCategory = getCategory();
-
     nav.innerHTML = text.nav
       .map((item) => {
-        const href = buildIndexUrl(lang, item.slug);
-        const activeClass = currentCategory === item.slug ? " active-nav" : "";
+        let href = "#";
+        let activeClass = "";
+
+        if (item.type === "archive") {
+          href = buildArchiveUrl(lang);
+          activeClass = page === "archive" ? " active-nav" : "";
+        } else {
+          href = buildIndexUrl(lang, item.slug);
+          activeClass = currentCategory === item.slug && page === "home" ? " active-nav" : "";
+        }
+
         return `<a class="nav-pill${activeClass}" href="${href}">${item.label}</a>`;
       })
       .join("");
@@ -396,6 +439,82 @@ function renderArticle(lang, newsData) {
   }
 }
 
+function createArchiveCard(story, lang, text) {
+  const cardImageHtml = createImageTag(
+    "",
+    story.image || "",
+    story.title?.[lang] || ""
+  );
+
+  return `
+    <article class="news-card">
+      ${cardImageHtml ? `
+        <a href="${buildArticleUrl(story.id, lang)}">
+          ${cardImageHtml}
+        </a>
+      ` : ""}
+      <div class="news-card-content">
+        <div class="card-category">${getCategoryLabel(story, lang)}</div>
+        <h3>
+          <a href="${buildArticleUrl(story.id, lang)}">${story.title?.[lang] || ""}</a>
+        </h3>
+        <p>${story.summary?.[lang] || ""}</p>
+        <div class="meta-line">${story.date || ""} ｜ ${text.metaSource}</div>
+      </div>
+    </article>
+  `;
+}
+
+function renderArchiveList(lang) {
+  const text = uiText[lang];
+  const archiveList = document.getElementById("archive-list");
+  const loadMoreBtn = document.getElementById("load-more-btn");
+
+  if (!archiveList || !loadMoreBtn) return;
+
+  const visibleItems = archiveState.items.slice(0, archiveState.visibleCount);
+
+  archiveList.innerHTML = visibleItems
+    .map((story) => createArchiveCard(story, lang, text))
+    .join("");
+
+  if (archiveState.visibleCount >= archiveState.items.length) {
+    loadMoreBtn.disabled = true;
+    loadMoreBtn.textContent = text.noMore;
+  } else {
+    loadMoreBtn.disabled = false;
+    loadMoreBtn.textContent = text.loadMore;
+  }
+
+  attachImageFallbackHandlers();
+}
+
+function renderArchive(lang, newsData) {
+  const text = uiText[lang];
+  const title = document.getElementById("archive-title");
+  const intro = document.getElementById("archive-intro");
+  const back = document.getElementById("back-link");
+  const loadMoreBtn = document.getElementById("load-more-btn");
+
+  if (title) title.textContent = text.archiveTitle;
+  if (intro) intro.textContent = text.archiveIntro;
+  if (back) back.href = buildIndexUrl(lang, "home");
+
+  archiveState.items = [...newsData];
+  archiveState.visibleCount = 10;
+
+  renderArchiveList(lang);
+
+  if (loadMoreBtn) {
+    loadMoreBtn.onclick = () => {
+      archiveState.visibleCount += 10;
+      renderArchiveList(lang);
+    };
+  }
+
+  document.title = `${text.archiveTitle} - Semanario China`;
+}
+
 async function init() {
   const lang = getLang();
   const page = document.body.dataset.page;
@@ -413,11 +532,16 @@ async function init() {
     if (page === "article") {
       renderArticle(lang, newsData);
     }
+
+    if (page === "archive") {
+      renderArchive(lang, newsData);
+    }
   } catch (error) {
     console.error(error);
 
     const hero = document.getElementById("hero-card");
     const articleBody = document.getElementById("article-body");
+    const archiveList = document.getElementById("archive-list");
 
     if (hero) {
       hero.innerHTML = `<div class="empty-state">Failed to load content.</div>`;
@@ -425,6 +549,10 @@ async function init() {
 
     if (articleBody) {
       articleBody.innerHTML = `<p>Failed to load content.</p>`;
+    }
+
+    if (archiveList) {
+      archiveList.innerHTML = `<div class="empty-state">Failed to load content.</div>`;
     }
   }
 }
