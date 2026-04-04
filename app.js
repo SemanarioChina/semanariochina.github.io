@@ -1,226 +1,431 @@
-const POSTS_INDEX_URL = "./data/posts.json"; 
-// ↑ 这里改成你项目里真正的文章索引 JSON 路径
-// 如果你现在不是 posts.json，而是 news.json / articles.json，就改这里
+const uiText = {
+  es: {
+    kicker: "Noticias sobre China para América Latina",
+    subtitle: "Ventana trilingüe sobre China, América Latina y el mundo.",
+    nav: [
+      { label: "Portada", slug: "home" },
+      { label: "China", slug: "china" },
+      { label: "América Latina", slug: "latam" },
+      { label: "Economía", slug: "economy" },
+      { label: "Cultura", slug: "culture" },
+      { label: "Especiales", slug: "special" }
+    ],
+    latest: "Últimas noticias",
+    featured: "Lecturas recomendadas",
+    footer: "Cobertura de China y América Latina",
+    back: "← Volver a la portada",
+    metaSource: "Semanario China",
+    noPosts: "No hay artículos en esta categoría."
+  },
+  en: {
+    kicker: "News on China for Latin America",
+    subtitle: "A trilingual window on China, Latin America and the world.",
+    nav: [
+      { label: "Home", slug: "home" },
+      { label: "China", slug: "china" },
+      { label: "Latin America", slug: "latam" },
+      { label: "Economy", slug: "economy" },
+      { label: "Culture", slug: "culture" },
+      { label: "Special Reports", slug: "special" }
+    ],
+    latest: "Latest News",
+    featured: "Recommended Reading",
+    footer: "Coverage of China and Latin America",
+    back: "← Back to homepage",
+    metaSource: "Semanario China",
+    noPosts: "No posts in this category."
+  },
+  zh: {
+    kicker: "面向拉丁美洲的中国新闻",
+    subtitle: "以西语、英语和中文呈现中国、拉美与世界的观察。",
+    nav: [
+      { label: "首页", slug: "home" },
+      { label: "中国", slug: "china" },
+      { label: "拉美", slug: "latam" },
+      { label: "经贸", slug: "economy" },
+      { label: "文化", slug: "culture" },
+      { label: "专题", slug: "special" }
+    ],
+    latest: "最新消息",
+    featured: "推荐阅读",
+    footer: "中国与拉美新闻观察",
+    back: "← 返回首页",
+    metaSource: "Semanario China",
+    noPosts: "这个栏目下还没有文章。"
+  }
+};
 
-const app = document.getElementById("app");
+const sectionLabels = {
+  home: {
+    es: "Portada",
+    en: "Home",
+    zh: "首页"
+  },
+  china: {
+    es: "China",
+    en: "China",
+    zh: "中国"
+  },
+  latam: {
+    es: "América Latina",
+    en: "Latin America",
+    zh: "拉美"
+  },
+  economy: {
+    es: "Economía",
+    en: "Economy",
+    zh: "经贸"
+  },
+  culture: {
+    es: "Cultura",
+    en: "Culture",
+    zh: "文化"
+  },
+  special: {
+    es: "Especiales",
+    en: "Special Reports",
+    zh: "专题"
+  }
+};
 
-function getQuery(name) {
+function getParams() {
+  return new URLSearchParams(window.location.search);
+}
+
+function getLang() {
+  const lang = getParams().get("lang") || "es";
+  return ["es", "en", "zh"].includes(lang) ? lang : "es";
+}
+
+function getCategory() {
+  return getParams().get("category") || "home";
+}
+
+function getArticleId() {
+  return getParams().get("id") || "";
+}
+
+function buildIndexUrl(lang, category = "home") {
   const url = new URL(window.location.href);
-  return url.searchParams.get(name);
-}
+  url.pathname = "/index.html";
+  url.searchParams.set("lang", lang);
 
-function escapeHtml(str = "") {
-  return String(str)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
-function normalizeLang(lang) {
-  return ["zh", "en", "es"].includes(lang) ? lang : "zh";
-}
-
-function getLocalizedField(field, lang) {
-  if (!field) return "";
-  if (typeof field === "string") return field;
-  return field[lang] || field.zh || field.en || field.es || "";
-}
-
-function formatDate(dateStr, lang) {
-  if (!dateStr) return "";
-  const date = new Date(dateStr);
-  if (Number.isNaN(date.getTime())) return dateStr;
-
-  const localeMap = {
-    zh: "zh-CN",
-    en: "en-US",
-    es: "es-ES",
-  };
-
-  return new Intl.DateTimeFormat(localeMap[lang] || "zh-CN", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(date);
-}
-
-async function fetchPostsIndex() {
-  const res = await fetch(POSTS_INDEX_URL, { cache: "no-store" });
-  if (!res.ok) {
-    throw new Error(`Failed to load posts index: ${res.status}`);
+  if (category === "home") {
+    url.searchParams.delete("category");
+  } else {
+    url.searchParams.set("category", category);
   }
-  return res.json();
+
+  url.searchParams.delete("id");
+  return `${url.pathname}${url.search}`;
 }
 
-function findPostById(posts, id) {
-  return posts.find((item) => item.id === id);
+function buildArticleUrl(id, lang) {
+  const url = new URL(window.location.href);
+  url.pathname = "/article.html";
+  url.searchParams.set("id", id);
+  url.searchParams.set("lang", lang);
+  url.searchParams.delete("category");
+  return `${url.pathname}${url.search}`;
 }
 
-async function fetchText(url) {
-  const res = await fetch(url, { cache: "no-store" });
-  if (!res.ok) {
-    throw new Error(`Failed to load article file: ${res.status}`);
+function setLang(lang) {
+  const page = document.body.dataset.page;
+  const currentCategory = getCategory();
+  const currentId = getArticleId();
+
+  if (page === "article" && currentId) {
+    window.location.href = buildArticleUrl(currentId, lang);
+    return;
   }
-  return res.text();
+
+  window.location.href = buildIndexUrl(lang, currentCategory);
 }
 
-async function imageExists(src) {
-  if (!src || !String(src).trim()) return false;
-
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () => resolve(true);
-    img.onerror = () => resolve(false);
-    img.src = src;
+function setLanguageButtons(lang) {
+  document.querySelectorAll(".lang-btn").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.lang === lang);
+    btn.addEventListener("click", () => setLang(btn.dataset.lang));
   });
 }
 
-function simpleMarkdownToHtml(md) {
-  // 这是一个尽量保守的简易转换
-  // 你的项目如果已经有 markdown 渲染器，就直接用你原来的，不用这段
-  return md
-    .split(/\n{2,}/)
-    .map(block => block.trim())
-    .filter(Boolean)
-    .map(block => {
-      if (block.startsWith("### ")) return `<h3>${escapeHtml(block.slice(4))}</h3>`;
-      if (block.startsWith("## ")) return `<h2>${escapeHtml(block.slice(3))}</h2>`;
-      if (block.startsWith("# ")) return `<h1>${escapeHtml(block.slice(2))}</h1>`;
-      return `<p>${escapeHtml(block).replace(/\n/g, "<br>")}</p>`;
-    })
-    .join("\n");
+function getCategoryLabel(story, lang) {
+  if (story.category?.[lang]) return story.category[lang];
+  if (story.category?.zh) return story.category.zh;
+  if (story.category?.en) return story.category.en;
+  if (story.category?.es) return story.category.es;
+
+  if (story.section && sectionLabels[story.section]?.[lang]) {
+    return sectionLabels[story.section][lang];
+  }
+
+  if (Array.isArray(story.tags) && story.tags.length > 0) {
+    return story.tags[0];
+  }
+
+  return "";
 }
 
-function extractLangBlock(rawMd, lang) {
-  const match = rawMd.match(new RegExp(`:::${lang}\\n([\\s\\S]*?)\\n:::`, "m"));
-  return match ? match[1].trim() : "";
+function renderCommonUI(lang) {
+  const text = uiText[lang];
+  const kicker = document.getElementById("site-kicker");
+  const subtitle = document.getElementById("site-subtitle");
+  const nav = document.getElementById("main-nav");
+  const footer = document.getElementById("footer-text");
+  const back = document.getElementById("back-link");
+
+  if (kicker) kicker.textContent = text.kicker;
+  if (subtitle) subtitle.textContent = text.subtitle;
+  if (footer) footer.textContent = text.footer;
+  if (back) back.textContent = text.back;
+
+  if (nav) {
+    const currentCategory = getCategory();
+
+    nav.innerHTML = text.nav
+      .map((item) => {
+        const href = buildIndexUrl(lang, item.slug);
+        const activeClass = currentCategory === item.slug ? " active-nav" : "";
+        return `<a class="nav-pill${activeClass}" href="${href}">${item.label}</a>`;
+      })
+      .join("");
+  }
+
+  document.documentElement.lang = lang;
 }
 
-function extractFrontMatter(rawMd) {
-  const match = rawMd.match(/^---\n([\s\S]*?)\n---/);
-  return match ? match[1] : "";
+async function loadNewsData() {
+  const res = await fetch(`./news-data.json?v=${Date.now()}`, {
+    cache: "no-store"
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to load news-data.json");
+  }
+
+  return await res.json();
 }
 
-function parseFrontMatterValue(frontMatter, key) {
-  const re = new RegExp(`^${key}:\\s*(.+)$`, "m");
-  const m = frontMatter.match(re);
-  return m ? m[1].trim() : "";
+function getFilteredData(newsData, category) {
+  if (category === "home") return newsData;
+  return newsData.filter((story) => story.section === category);
 }
 
-function buildArticleHtml(post, lang, bodyHtml, showImage) {
-  const title = getLocalizedField(post.title, lang);
-  const summary = getLocalizedField(post.summary, lang);
-  const section = post.section || "";
-  const dateText = formatDate(post.date, lang);
-
-  return `
-    <a class="back-link" href="./index.html?lang=${lang}">← Back</a>
-
-    <article>
-      <header class="article-head">
-        ${showImage ? `<img class="article-cover" src="${escapeHtml(post.image)}" alt="${escapeHtml(title)}">` : ""}
-        <div class="article-head-inner">
-          <div class="article-meta">
-            ${section ? `<span class="article-tag">${escapeHtml(section)}</span>` : ""}
-            ${dateText ? `<span>${escapeHtml(dateText)}</span>` : ""}
-          </div>
-          <h1 class="article-title">${escapeHtml(title)}</h1>
-          ${summary ? `<p class="article-summary">${escapeHtml(summary)}</p>` : ""}
-        </div>
-      </header>
-
-      <section class="article-body">
-        ${bodyHtml}
-      </section>
-    </article>
-  `;
+function createEmptyState(text) {
+  return `<div class="empty-state">${text}</div>`;
 }
 
-async function renderArticlePage() {
-  try {
-    const id = getQuery("id");
-    const lang = normalizeLang(getQuery("lang") || "zh");
+function createImageTag(className, src, alt, extraAttrs = "") {
+  if (!src || !String(src).trim()) return "";
+  return `<img class="${className}" src="${src}" alt="${alt || ""}" ${extraAttrs}>`;
+}
 
-    if (!id) {
-      app.innerHTML = `<div class="error">Missing article id.</div>`;
-      return;
+function attachImageFallbackHandlers() {
+  document.querySelectorAll("img").forEach((img) => {
+    img.addEventListener(
+      "error",
+      () => {
+        if (img.id === "article-image") {
+          img.style.display = "none";
+          img.removeAttribute("src");
+          return;
+        }
+
+        const heroLink = img.closest("#hero-card > a");
+        if (heroLink) {
+          heroLink.style.display = "none";
+          return;
+        }
+
+        const newsCardLink = img.closest(".news-card > a");
+        if (newsCardLink) {
+          newsCardLink.style.display = "none";
+          return;
+        }
+
+        img.style.display = "none";
+      },
+      { once: true }
+    );
+  });
+}
+
+function renderHome(lang, newsData) {
+  const text = uiText[lang];
+  const hero = document.getElementById("hero-card");
+  const latestPanel = document.getElementById("latest-panel");
+  const featuredTitle = document.getElementById("featured-title");
+  const featuredGrid = document.getElementById("featured-grid");
+
+  const currentCategory = getCategory();
+  const filteredData = getFilteredData(newsData, currentCategory);
+
+  if (!filteredData.length) {
+    if (hero) hero.innerHTML = createEmptyState(text.noPosts);
+    if (latestPanel) latestPanel.innerHTML = `<h2 class="panel-title">${text.latest}</h2>`;
+    if (featuredTitle) featuredTitle.textContent = text.featured;
+    if (featuredGrid) featuredGrid.innerHTML = "";
+    return;
+  }
+
+  const mainStory = filteredData[0];
+  const latestStories = filteredData.slice(0, 5);
+  const featuredStories = filteredData.slice(1, 7);
+
+  if (hero) {
+    const heroImageHtml = createImageTag(
+      "hero-image",
+      mainStory.image || "",
+      mainStory.title?.[lang] || ""
+    );
+
+    hero.innerHTML = `
+      ${heroImageHtml ? `
+        <a href="${buildArticleUrl(mainStory.id, lang)}">
+          ${heroImageHtml}
+        </a>
+      ` : ""}
+      <div class="hero-content">
+        <div class="label-chip">${getCategoryLabel(mainStory, lang)}</div>
+        <h2 class="hero-title">
+          <a href="${buildArticleUrl(mainStory.id, lang)}">${mainStory.title?.[lang] || ""}</a>
+        </h2>
+        <p class="hero-summary">${mainStory.summary?.[lang] || ""}</p>
+        <div class="meta-line">${mainStory.date || ""} ｜ ${text.metaSource}</div>
+      </div>
+    `;
+  }
+
+  if (latestPanel) {
+    latestPanel.innerHTML = `
+      <h2 class="panel-title">${text.latest}</h2>
+      ${latestStories
+        .map(
+          (story) => `
+            <div class="latest-item">
+              <a href="${buildArticleUrl(story.id, lang)}">${story.title?.[lang] || ""}</a>
+              <div class="meta-line">${story.date || ""}</div>
+            </div>
+          `
+        )
+        .join("")}
+    `;
+  }
+
+  if (featuredTitle) {
+    featuredTitle.textContent = text.featured;
+  }
+
+  if (featuredGrid) {
+    featuredGrid.innerHTML = featuredStories
+      .map((story) => {
+        const cardImageHtml = createImageTag(
+          "",
+          story.image || "",
+          story.title?.[lang] || ""
+        );
+
+        return `
+          <article class="news-card">
+            ${cardImageHtml ? `
+              <a href="${buildArticleUrl(story.id, lang)}">
+                ${cardImageHtml}
+              </a>
+            ` : ""}
+            <div class="news-card-content">
+              <div class="card-category">${getCategoryLabel(story, lang)}</div>
+              <h3>
+                <a href="${buildArticleUrl(story.id, lang)}">${story.title?.[lang] || ""}</a>
+              </h3>
+              <p>${story.summary?.[lang] || ""}</p>
+              <div class="meta-line">${story.date || ""}</div>
+            </div>
+          </article>
+        `;
+      })
+      .join("");
+  }
+
+  attachImageFallbackHandlers();
+}
+
+function renderArticle(lang, newsData) {
+  const id = getArticleId() || newsData[0]?.id;
+  const story = newsData.find((item) => item.id === id) || newsData[0];
+  const text = uiText[lang];
+
+  if (!story) return;
+
+  document.title = `${story.title?.[lang] || ""} - Semanario China`;
+
+  const category = document.getElementById("article-category");
+  const title = document.getElementById("article-title");
+  const summary = document.getElementById("article-summary");
+  const meta = document.getElementById("article-meta");
+  const image = document.getElementById("article-image");
+  const body = document.getElementById("article-body");
+  const back = document.getElementById("back-link");
+
+  if (category) category.textContent = getCategoryLabel(story, lang);
+  if (title) title.textContent = story.title?.[lang] || "";
+  if (summary) summary.textContent = story.summary?.[lang] || "";
+  if (meta) meta.textContent = `${story.date || ""} ｜ ${text.metaSource}`;
+
+  if (image) {
+    if (story.image && String(story.image).trim()) {
+      image.src = story.image;
+      image.alt = story.title?.[lang] || "";
+      image.style.display = "block";
+
+      image.onerror = () => {
+        image.style.display = "none";
+        image.removeAttribute("src");
+      };
+    } else {
+      image.style.display = "none";
+      image.removeAttribute("src");
+      image.alt = "";
     }
+  }
 
-    const posts = await fetchPostsIndex();
-    const post = findPostById(posts, id);
+  if (body) body.innerHTML = story.bodyHtml?.[lang] || "";
 
-    if (!post) {
-      app.innerHTML = `<div class="error">Article not found.</div>`;
-      return;
-    }
-
-    // 这里假设索引里有 post.file 字段指向 md 文件
-    // 如果你现在用的是 post.path / post.url / post.markdown，就改成对应字段
-    const mdPath = post.file || post.path || post.url || "";
-    if (!mdPath) {
-      app.innerHTML = `<div class="error">Markdown file path is missing.</div>`;
-      return;
-    }
-
-    const rawMd = await fetchText(mdPath);
-    const langMd = extractLangBlock(rawMd, lang);
-    const bodyHtml = simpleMarkdownToHtml(langMd);
-
-    // 关键逻辑：没写 image，或图片不存在，就不显示图片栏
-    const showImage = await imageExists(post.image);
-
-    app.innerHTML = buildArticleHtml(post, lang, bodyHtml, showImage);
-    document.title = `${getLocalizedField(post.title, lang)} - Semanario China`;
-  } catch (err) {
-    console.error(err);
-    app.innerHTML = `<div class="error">Failed to load the article.</div>`;
+  if (back) {
+    const backCategory = story.section || "home";
+    back.href = buildIndexUrl(lang, backCategory);
   }
 }
 
-/* =========
-   首页/列表页也可以用同样逻辑
-   没图就不渲染缩略图
-   ========= */
-
-function buildCardHtml(post, lang, showImage) {
-  const title = getLocalizedField(post.title, lang);
-  const summary = getLocalizedField(post.summary, lang);
-  const section = post.section || "";
-
-  return `
-    <article class="news-card">
-      <a href="./article.html?id=${encodeURIComponent(post.id)}&lang=${lang}">
-        ${showImage ? `
-          <div class="news-card-cover-wrap">
-            <img class="news-card-cover" src="${escapeHtml(post.image)}" alt="${escapeHtml(title)}">
-          </div>
-        ` : ""}
-        <div class="news-card-body">
-          ${section ? `<div class="news-card-section">${escapeHtml(section)}</div>` : ""}
-          <h2 class="news-card-title">${escapeHtml(title)}</h2>
-          ${summary ? `<p class="news-card-summary">${escapeHtml(summary)}</p>` : ""}
-        </div>
-      </a>
-    </article>
-  `;
-}
-
-async function renderCards(posts, lang) {
-  const htmlList = await Promise.all(
-    posts.map(async (post) => {
-      const showImage = await imageExists(post.image);
-      return buildCardHtml(post, lang, showImage);
-    })
-  );
-  return htmlList.join("\n");
-}
-
 async function init() {
+  const lang = getLang();
   const page = document.body.dataset.page;
-  if (page === "article") {
-    await renderArticlePage();
+
+  setLanguageButtons(lang);
+  renderCommonUI(lang);
+
+  try {
+    const newsData = await loadNewsData();
+
+    if (page === "home") {
+      renderHome(lang, newsData);
+    }
+
+    if (page === "article") {
+      renderArticle(lang, newsData);
+    }
+  } catch (error) {
+    console.error(error);
+
+    const hero = document.getElementById("hero-card");
+    const articleBody = document.getElementById("article-body");
+
+    if (hero) {
+      hero.innerHTML = `<div class="empty-state">Failed to load content.</div>`;
+    }
+
+    if (articleBody) {
+      articleBody.innerHTML = `<p>Failed to load content.</p>`;
+    }
   }
 }
 
