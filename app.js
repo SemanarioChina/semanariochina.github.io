@@ -184,7 +184,10 @@ function renderHome(lang, newsData) {
     </article>
   `).join("");
 }
-
+function getCategory() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("category") || "home";
+}
 function renderArticle(lang, newsData) {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id") || newsData[0]?.id;
